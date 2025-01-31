@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { auth, db } from '../firebase';
 import { motion } from 'framer-motion';
 import { collection, addDoc, query, where, onSnapshot, deleteDoc, doc, updateDoc } from 'firebase/firestore';
-
+import teamwork from '../assets/teamwork.jpg'
 import { HiUserGroup, HiChat, HiPlus, HiX, HiCheck } from 'react-icons/hi';
 
 const CollaborativeTask = ({user}) => {
@@ -101,20 +101,27 @@ const CollaborativeTask = ({user}) => {
             console.error("Error completing task:", error);
         }
     };
-
+    const deleteTask = async (taskId) => {
+        try {
+            await deleteDoc(doc(db, 'groupTasks', taskId));
+        } catch (error) {
+            console.error("Error deleting task:", error);
+        }
+    };
+    
     return (
         <div className="min-h-screen dark:bg-gray-800 p-4">
             <div className="max-w-6xl mx-auto">
                 <div className="flex justify-between items-center mb-8">
-                    <h1 className="text-4xl font-bold text-white">Collaborative Space</h1>
+                    <h1 className="text-4xl font-bold text-black dark:text-white">Collaborative Space</h1>
                     <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setShowAddTask(true)}
-                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg"
+                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg mr-11"
                     >
                         <HiPlus className="w-5 h-5" />
-                        New Group Task
+                     <div> New Group Task</div>  
                     </motion.button>
                 </div>
 
@@ -122,86 +129,128 @@ const CollaborativeTask = ({user}) => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.5 }}
-                    className="text-xl text-gray-300 italic mb-8"
+                    className="text-xl text-gray-700 italic mb-8 dark:text-white"
                 >
                     {currentQuote}
                 </motion.p>
 
-               
                 <div className="space-y-4">
-                    {groupTasks.map((task) => (
-                        <motion.div
-                            key={task.id}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="bg-white dark:bg-gray-700 rounded-lg p-6 shadow-lg"
-                        >
-                            <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">
-                                {task.title}
-                            </h3>
-                            <p className="text-gray-600 dark:text-gray-300 mb-4">
-                                {task.description}
-                            </p>
-                            
-                            {/* Team Members */}
-                            <div className="flex items-center gap-2 mb-4">
-                                <HiUserGroup className="w-5 h-5 text-blue-500" />
-                                <div className="flex flex-wrap gap-2">
-                                    {task.members.map((member, index) => (
-                                        <span
-                                            key={index}
-                                            className="px-2 py-1 bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-100 rounded-full text-sm"
-                                        >
-                                            {member}
-                                        </span>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div className="flex justify-between items-center mt-4 pt-4 border-t dark:border-gray-600">
-                                <span className={`px-2 py-1 rounded-full text-sm ${
-                                    task.status === 'completed' 
-                                        ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100'
-                                        : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100'
-                                }`}>
-                                    {task.status === 'completed' ? 'Completed' : 'In Progress'}
-                                </span>
-                                {task.status !== 'completed' && (
-                                    <button
-                                        onClick={() => updateTaskStatus(task.id)}
-                                        className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2"
-                                    >
-                                        <HiCheck className="w-5 h-5" />
-                                        Mark as Complete
-                                    </button>
-                                )}
-                            </div>
-
-
-                            {/* Comments Section */}
-                            <div className="border-t dark:border-gray-600 pt-4 mt-4">
-                                <h4 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
-                                    Comments
-                                </h4>
-                                <div className="space-y-2 mb-4">
-                                    {task.comments.map((comment, index) => (
-                                        <div
-                                            key={index}
-                                            className="bg-gray-50 dark:bg-gray-800 p-3 rounded"
-                                        >
-                                            <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400 mb-1">
-                                                <span>{comment.author}</span>
-                                                <span>{new Date(comment.timestamp?.toDate()).toLocaleString()}</span>
-                                            </div>
-                                            <p className="text-gray-800 dark:text-gray-200">{comment.text}</p>
-                                        </div>
-                                    ))}
-                                </div>
-                                <CommentInput taskId={task.id} onAddComment={addComment} />
-                            </div>
-                        </motion.div>
-                    ))}
+    {groupTasks.length === 0 ? (
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="bg-white dark:bg-gray-700 rounded-lg p-8 shadow-lg text-center"
+        >
+            <img 
+                src={teamwork} 
+                alt="No tasks" 
+                className="w-86 h-64 mx-auto mb-6 opacity-100"
+            />
+            <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+                No Group Tasks Yet
+            </h3>
+            <p className="text-gray-600 dark:text-gray-300 mb-6">
+                Start collaborating by creating your first group task!
+            </p>
+            <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setShowAddTask(true)}
+                className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg mx-auto"
+            >
+                <HiPlus className="w-5 h-5" />
+                Create First Task
+            </motion.button>
+        </motion.div>
+    ) : (
+        groupTasks.map((task) => (
+            <motion.div
+                key={task.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-white dark:bg-gray-700 rounded-lg p-6 shadow-lg"
+            >
+                <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">
+                    {task.title}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
+                    {task.description}
+                </p>  
+                {/* Team Members */}
+                <div className="flex items-center gap-2 mb-4">
+                    <HiUserGroup className="w-5 h-5 text-blue-500" />
+                    <div className="flex flex-wrap gap-2">
+                        {task.members.map((member, index) => (
+                            <span
+                                key={index}
+                                className="px-2 py-1 bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-100 rounded-full text-sm"
+                            >
+                                {member}
+                            </span>
+                        ))}
+                    </div>
                 </div>
+
+                <div className="flex justify-between items-center mt-4 pt-4 border-t dark:border-gray-600">
+                    <span className={`px-2 py-1 rounded-full text-sm ${
+                        task.status === 'completed' 
+                            ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100'
+                            : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100'
+                    }`}>
+                        {task.status === 'completed' ? 'Completed' : 'In Progress'}
+                    </span>
+                    <div className="flex gap-2">
+                        {task.status !== 'completed' && (
+                            <button
+                                onClick={() => updateTaskStatus(task.id)}
+                                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2"
+                            >
+                                <HiCheck className="w-5 h-5" />
+                                Mark as Complete
+                            </button>
+                        )}
+                        <button
+                            onClick={() => deleteTask(task.id)}
+                            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 flex items-center gap-2"
+                        >
+                            <HiX className="w-5 h-5" />
+                            Delete Task
+                        </button>
+                    </div>
+                </div>
+
+                {/* Comments Section */}
+                <div className="border-t dark:border-gray-600 pt-4 mt-4">
+                    <h4 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
+                        Comments
+                    </h4>
+                    <div className="space-y-2 mb-4">
+                        {task.comments.map((comment, index) => (
+                            <div
+                                key={index}
+                                className="bg-gray-50 dark:bg-gray-800 p-3 rounded"
+                            >
+                                <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400 mb-1">
+                                    <span>{comment.author}</span>
+                                    <span>{new Date(comment.timestamp?.toDate()).toLocaleString()}</span>
+                                </div>
+                                <p className="text-gray-800 dark:text-gray-200">{comment.text}</p>
+                            </div>
+                        ))}
+                    </div>
+                    <CommentInput taskId={task.id} onAddComment={addComment} />
+                </div>
+            </motion.div>
+        ))
+    )}
+</div>
+
+             
+                           
+
+
+
+               
 
                 {/* Add Task */}
                 {showAddTask && (
