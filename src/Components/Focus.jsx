@@ -22,7 +22,7 @@ const Focus = () => {
                     Coming Soon...
                 </motion.h1>
 
-                {/* Animated dots */}
+             
                 <div className="flex gap-2 justify-center">
                     {[1, 2, 3].map((dot) => (
                         <motion.div

@@ -123,7 +123,7 @@ const Auth = () => {
       ))}
     </motion.div>
     
-    {/* Decorative elements */}
+    
     <motion.div
       className="absolute -z-10"
       initial={{ scale: 0 }}

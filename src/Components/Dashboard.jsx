@@ -53,8 +53,8 @@ const Dashboard = () => {
   };
   useEffect(() => {
     if (user) {
-        console.log("Current user:", user); // Debug log
-        console.log("Display name:", user.displayName); // Debug log
+        // console.log("Current user:", user); // Debug 
+        // console.log("Display name:", user.displayName); // Debug 
     }
 }, [user]);
 
@@ -110,7 +110,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Unique Features */}
+      
         <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
           <motion.div 
             whileHover={{ scale: 1.02 }}

@@ -61,7 +61,7 @@ const Tasks = ({ user }) => {
                 createdAt: new Date()
             };
     
-            // Only add document once
+          
             await addDoc(collection(db, 'tasks'), taskData);
             
             setNewTask({ 

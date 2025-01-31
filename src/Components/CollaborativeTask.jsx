@@ -17,7 +17,7 @@ const CollaborativeTask = ({user}) => {
     });
     const [currentQuote, setCurrentQuote] = useState('');
 
-    // Your existing quotes code
+    
     const grpQuotes = [
         "Work on Group Projects!",
         "Collaborate with your team!",
@@ -34,7 +34,7 @@ const CollaborativeTask = ({user}) => {
         return () => clearInterval(interval);
     }, []);
 
-    // Fetch group tasks
+    
     useEffect(() => {
         const q = query(
             collection(db, 'groupTasks'),
@@ -127,7 +127,7 @@ const CollaborativeTask = ({user}) => {
                     {currentQuote}
                 </motion.p>
 
-                {/* Group Tasks List */}
+               
                 <div className="space-y-4">
                     {groupTasks.map((task) => (
                         <motion.div
@@ -203,7 +203,7 @@ const CollaborativeTask = ({user}) => {
                     ))}
                 </div>
 
-                {/* Add Task Modal */}
+                {/* Add Task */}
                 {showAddTask && (
                     <AddGroupTaskModal
                         newGroupTask={newGroupTask}
@@ -217,7 +217,7 @@ const CollaborativeTask = ({user}) => {
     );
 };
 
-// Comment Input Component
+
 const CommentInput = ({ taskId, onAddComment }) => {
     const [comment, setComment] = useState('');
 
@@ -248,7 +248,7 @@ const CommentInput = ({ taskId, onAddComment }) => {
     );
 };
 
-// Add Group Task Modal Component
+
 const AddGroupTaskModal = ({ newGroupTask, setNewGroupTask, onSubmit, onClose }) => {
     const addMemberField = () => {
         setNewGroupTask({
@@ -298,7 +298,7 @@ const AddGroupTaskModal = ({ newGroupTask, setNewGroupTask, onSubmit, onClose })
                     />
                     
                     
-                    {/* Team Members */}
+                   
                     <div className="space-y-2">
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                             Team Members (Email)
